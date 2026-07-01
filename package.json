@@ -1,0 +1,21 @@
+{
+  "name": "dvc-systems-demo",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "DVC Systems Demo — цифровой двойник производства металлоконструкций для ТОО СТАЛЬ-ЭФФЕКТ",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recharts": "^2.12.7"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.2"
+  }
+}
