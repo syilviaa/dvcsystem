@@ -275,12 +275,12 @@ export const weekPlanFact = [
 
 // --- Статусы заказов (круговая) ---
 export const statusPie = [
-  { name: 'В работе', value: 14, color: '#2563eb' },
-  { name: 'Сварка', value: 6, color: '#0891b2' },
-  { name: 'Покраска', value: 8, color: '#d97706' },
-  { name: 'Сборка', value: 5, color: '#7c3aed' },
-  { name: 'Отгрузка', value: 4, color: '#16a34a' },
-  { name: 'Завершено', value: 11, color: '#94a3b8' },
+  { name: 'В работе', value: 14, color: '#3a6099' },
+  { name: 'Сварка', value: 6, color: '#4a7f8c' },
+  { name: 'Покраска', value: 8, color: '#a97b38' },
+  { name: 'Сборка', value: 5, color: '#6b6591' },
+  { name: 'Отгрузка', value: 4, color: '#4f8a63' },
+  { name: 'Завершено', value: 11, color: '#aab0b8' },
 ]
 
 // --- Контроль металла ---

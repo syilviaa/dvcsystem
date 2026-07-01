@@ -79,7 +79,7 @@ export default function Dashboard() {
                 <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #e6e9f0', fontSize: 13 }} />
                 <Legend iconType="circle" wrapperStyle={{ fontSize: 12 }} />
                 <Line type="monotone" dataKey="план" stroke="#94a3b8" strokeWidth={2.5} dot={{ r: 3 }} strokeDasharray="5 4" isAnimationActive={false} />
-                <Line type="monotone" dataKey="факт" stroke="#2563eb" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} isAnimationActive={false} />
+                <Line type="monotone" dataKey="факт" stroke="#3a6099" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} isAnimationActive={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>

@@ -43,15 +43,15 @@ export default function MetalControl() {
             <AreaChart data={metal.consumption} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
               <defs>
                 <linearGradient id="gm" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#2563eb" stopOpacity={0.35} />
-                  <stop offset="100%" stopColor="#2563eb" stopOpacity={0} />
+                  <stop offset="0%" stopColor="#3a6099" stopOpacity={0.35} />
+                  <stop offset="100%" stopColor="#3a6099" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#eef1f6" vertical={false} />
               <XAxis dataKey="day" tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
               <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #e6e9f0', fontSize: 13 }} formatter={(v) => [`${v} т`, 'Расход']} />
-              <Area type="monotone" dataKey="расход" stroke="#2563eb" strokeWidth={3} fill="url(#gm)" isAnimationActive={false} />
+              <Area type="monotone" dataKey="расход" stroke="#3a6099" strokeWidth={3} fill="url(#gm)" isAnimationActive={false} />
             </AreaChart>
           </ResponsiveContainer>
         </div>

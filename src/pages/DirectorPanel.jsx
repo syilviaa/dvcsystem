@@ -69,17 +69,17 @@ export default function DirectorPanel() {
   return (
     <div>
       {/* Полоса-резюме */}
-      <div className={`card card-pad ${flash ? 'flash' : ''}`} style={{ marginBottom: 18, background: 'linear-gradient(120deg,#0f172a,#1e293b)', border: 'none', color: '#fff' }}>
+      <div className={`card card-pad ${flash ? 'flash' : ''}`} style={{ marginBottom: 18 }}>
         <div className="row between wrap gap16">
           <div>
-            <div style={{ fontSize: 13, color: '#94a3b8' }}>Состояние предприятия · 01.07.2026</div>
-            <div className="bold" style={{ fontSize: 22, marginTop: 4 }}>Производство работает · {bottlenecks.length} узких мест требуют внимания</div>
+            <div className="muted f12">Состояние предприятия · 01.07.2026</div>
+            <div className="bold" style={{ fontSize: 20, marginTop: 4 }}>Производство работает · {bottlenecks.length} узких мест требуют внимания</div>
           </div>
           <div className="row gap16 wrap">
-            <div style={{ textAlign: 'center' }}><div className="bold" style={{ fontSize: 28 }}>{kpi.inWork}</div><div style={{ fontSize: 12, color: '#94a3b8' }}>в работе</div></div>
-            <div style={{ textAlign: 'center' }}><div className="bold" style={{ fontSize: 28, color: '#4ade80' }}>{kpi.doneToday}</div><div style={{ fontSize: 12, color: '#94a3b8' }}>готово сегодня</div></div>
-            <div style={{ textAlign: 'center' }}><div className="bold" style={{ fontSize: 28, color: '#f87171' }}>{overdueOrders.length}</div><div style={{ fontSize: 12, color: '#94a3b8' }}>просрочено</div></div>
-            <div style={{ textAlign: 'center' }}><div className="bold" style={{ fontSize: 28, color: '#fbbf24' }}>{kpi.load}%</div><div style={{ fontSize: 12, color: '#94a3b8' }}>загрузка</div></div>
+            <div style={{ textAlign: 'center' }}><div className="bold" style={{ fontSize: 26 }}>{kpi.inWork}</div><div className="muted f12">в работе</div></div>
+            <div style={{ textAlign: 'center' }}><div className="bold" style={{ fontSize: 26, color: 'var(--green)' }}>{kpi.doneToday}</div><div className="muted f12">готово сегодня</div></div>
+            <div style={{ textAlign: 'center' }}><div className="bold" style={{ fontSize: 26, color: 'var(--red)' }}>{overdueOrders.length}</div><div className="muted f12">просрочено</div></div>
+            <div style={{ textAlign: 'center' }}><div className="bold" style={{ fontSize: 26, color: 'var(--amber)' }}>{kpi.load}%</div><div className="muted f12">загрузка</div></div>
           </div>
         </div>
       </div>
@@ -95,7 +95,7 @@ export default function DirectorPanel() {
                 <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} allowDecimals={false} />
                 <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #e6e9f0', fontSize: 13 }} formatter={(v) => [`${v} заказов`, 'На участке']} cursor={{ fill: '#f1f5f9' }} />
                 <Bar dataKey="count" radius={[6, 6, 0, 0]} isAnimationActive={false}>
-                  {perStage.map((p, i) => <Cell key={i} fill={p.bottleneck ? '#dc2626' : '#2563eb'} />)}
+                  {perStage.map((p, i) => <Cell key={i} fill={p.bottleneck ? '#b85a54' : '#3a6099'} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>

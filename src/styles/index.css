@@ -4,38 +4,39 @@
    =================================================================== */
 
 :root {
-  /* Палитра */
-  --bg: #f4f6fb;
+  /* Палитра — приглушённая, минималистичная */
+  --bg: #f6f7f9;
   --bg-panel: #ffffff;
-  --bg-soft: #f8fafc;
+  --bg-soft: #f7f8fa;
   --bg-elevated: #ffffff;
-  --border: #e6e9f0;
-  --border-strong: #d5dae6;
+  --border: #eaecf0;
+  --border-strong: #dcdfe5;
 
-  --text: #0f172a;
-  --text-2: #475569;
-  --text-3: #94a3b8;
+  --text: #17191d;
+  --text-2: #5a5f68;
+  --text-3: #9aa0a9;
 
-  --primary: #2563eb;
-  --primary-soft: #eff4ff;
-  --primary-600: #1d4ed8;
+  --primary: #3a6099;
+  --primary-soft: #eef1f5;
+  --primary-600: #2f4f80;
 
-  --green: #16a34a;
-  --green-soft: #e7f7ec;
-  --amber: #d97706;
-  --amber-soft: #fef3e2;
-  --red: #dc2626;
-  --red-soft: #fdeaea;
-  --violet: #7c3aed;
-  --violet-soft: #f1ebfe;
-  --cyan: #0891b2;
-  --cyan-soft: #e2f5f9;
-  --slate: #64748b;
-  --slate-soft: #eef1f6;
+  /* Статусы — приглушённые тона, мягкие фоны почти нейтральные */
+  --green: #4f8a63;
+  --green-soft: #eef2ef;
+  --amber: #a97b38;
+  --amber-soft: #f4f1ea;
+  --red: #b85a54;
+  --red-soft: #f4edec;
+  --violet: #6b6591;
+  --violet-soft: #efeef3;
+  --cyan: #4a7f8c;
+  --cyan-soft: #eef2f3;
+  --slate: #6b7280;
+  --slate-soft: #eef0f2;
 
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-  --shadow: 0 4px 14px rgba(15, 23, 42, 0.07);
-  --shadow-lg: 0 18px 50px rgba(15, 23, 42, 0.16);
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  --shadow-lg: 0 16px 44px rgba(15, 23, 42, 0.13);
 
   --radius: 14px;
   --radius-sm: 10px;
@@ -98,12 +99,13 @@ button {
 .sidebar {
   width: var(--sidebar-w);
   flex-shrink: 0;
-  background: #0f172a;
-  color: #cbd5e1;
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  color: var(--text-2);
   display: flex;
   flex-direction: column;
   padding: 20px 14px;
-  gap: 4px;
+  gap: 2px;
 }
 
 .brand {
@@ -113,26 +115,25 @@ button {
   padding: 6px 10px 20px;
 }
 .brand-logo {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: var(--primary);
   display: grid;
   place-items: center;
-  font-weight: 800;
+  font-weight: 700;
   color: #fff;
-  font-size: 18px;
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.5);
+  font-size: 17px;
 }
 .brand-name {
   font-weight: 700;
-  color: #fff;
+  color: var(--text);
   font-size: 15px;
   line-height: 1.1;
 }
 .brand-sub {
   font-size: 11px;
-  color: #64748b;
+  color: var(--text-3);
   letter-spacing: 0.3px;
 }
 
@@ -140,7 +141,7 @@ button {
   font-size: 10.5px;
   text-transform: uppercase;
   letter-spacing: 0.09em;
-  color: #64748b;
+  color: var(--text-3);
   padding: 14px 12px 6px;
   font-weight: 600;
 }
@@ -150,8 +151,8 @@ button {
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
-  border-radius: 10px;
-  color: #cbd5e1;
+  border-radius: 9px;
+  color: var(--text-2);
   font-size: 13.5px;
   font-weight: 500;
   border: none;
@@ -162,13 +163,13 @@ button {
   position: relative;
 }
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #fff;
+  background: var(--bg-soft);
+  color: var(--text);
 }
 .nav-item.active {
-  background: var(--primary);
-  color: #fff;
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 600;
 }
 .nav-item .nav-ico {
   width: 18px;
@@ -187,15 +188,15 @@ button {
   text-align: center;
 }
 .nav-item.active .nav-badge {
-  background: rgba(255, 255, 255, 0.28);
+  background: var(--primary);
 }
 
 .sidebar-foot {
   margin-top: auto;
   padding: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--border);
   font-size: 11px;
-  color: #64748b;
+  color: var(--text-3);
 }
 
 /* Основная область */
@@ -749,15 +750,21 @@ button {
 
 @media (max-width: 1080px) {
   .kpi-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 }
+
+/* Планшет / узкий экран — сворачиваем боковое меню в иконки */
 @media (max-width: 860px) {
   :root {
-    --sidebar-w: 68px;
+    --sidebar-w: 62px;
   }
   .sidebar {
     padding: 16px 8px;
+  }
+  .brand {
+    padding: 6px 4px 16px;
+    justify-content: center;
   }
   .brand-name,
   .brand-sub,
@@ -771,5 +778,68 @@ button {
   }
   .content {
     padding: 16px;
+  }
+}
+
+/* Телефон — всё в одну колонку, верхняя панель переносится */
+@media (max-width: 720px) {
+  /* Любая сетка → одна колонка (перекрываем инлайновые стили) */
+  .grid {
+    grid-template-columns: 1fr !important;
+  }
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Верхняя панель переносится, а не сдвигает блоки */
+  .topbar {
+    height: auto;
+    min-height: 58px;
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    gap: 10px;
+  }
+  .topbar h1 {
+    font-size: 16px;
+  }
+  .topbar-sub,
+  .live-pill {
+    display: none;
+  }
+  .topbar-spacer {
+    display: none;
+  }
+  .user-chip .u-name,
+  .user-chip .u-role {
+    display: none;
+  }
+  .user-chip {
+    padding: 4px;
+  }
+
+  /* Заголовки карточек и таблицы не должны распирать экран */
+  .card-head {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .card {
+    overflow-x: auto;
+  }
+  .tabs {
+    overflow-x: auto;
+    padding: 0 12px;
+  }
+  .modal-overlay {
+    padding: 14px 10px;
+  }
+  .content {
+    padding: 14px;
+  }
+}
+
+/* Узкий телефон */
+@media (max-width: 440px) {
+  .kpi-grid {
+    grid-template-columns: 1fr !important;
   }
 }
