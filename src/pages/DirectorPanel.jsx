@@ -11,6 +11,15 @@ import {
   IconTrend, IconGauge, IconClock, IconChevron,
 } from '../components/Icons.jsx'
 
+// Наклонная подпись оси X — чтобы длинные названия не перекрывались
+function AngledTick({ x, y, payload }) {
+  return (
+    <text x={x} y={y} dy={2} textAnchor="end" transform={`rotate(-40, ${x}, ${y})`} fontSize={10.5} fill="#94a3b8">
+      {payload.value}
+    </text>
+  )
+}
+
 export default function DirectorPanel() {
   const { orders, sites, employees, kpi, flashKey } = useStore()
   const { setPage, openOrder } = useUI()
@@ -87,11 +96,11 @@ export default function DirectorPanel() {
       <div className="grid" style={{ gridTemplateColumns: '1.4fr 1fr' }}>
         {/* Производство по участкам */}
         <Panel icon={IconFactory} title="Производство" right="заказов на участке">
-          <div style={{ height: 210 }}>
+          <div style={{ height: 250 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={perStage} margin={{ top: 4, right: 4, left: -22, bottom: 0 }}>
+              <BarChart data={perStage} margin={{ top: 4, right: 4, left: -22, bottom: 12 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eef1f6" vertical={false} />
-                <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} interval={0} angle={-18} dy={8} height={40} />
+                <XAxis dataKey="name" tick={<AngledTick />} axisLine={false} tickLine={false} interval={0} height={64} />
                 <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} allowDecimals={false} />
                 <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #e6e9f0', fontSize: 13 }} formatter={(v) => [`${v} заказов`, 'На участке']} cursor={{ fill: '#f1f5f9' }} />
                 <Bar dataKey="count" radius={[6, 6, 0, 0]} isAnimationActive={false}>
