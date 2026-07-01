@@ -104,7 +104,7 @@ export default function DirectorPanel() {
 
         {/* Сотрудники */}
         <Panel icon={IconUsers} title="Сотрудники" right={`всего ${employees.length}`} accent="var(--violet)">
-          <div className="row gap8">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(118px, 1fr))', gap: 8 }}>
             <StaffPill label="работают" value={staff.working} color="var(--green)" soft="var(--green-soft)" />
             <StaffPill label="на паузе" value={staff.paused} color="var(--amber)" soft="var(--amber-soft)" />
             <StaffPill label="отсутствуют" value={staff.absent} color="var(--slate)" soft="var(--slate-soft)" />

@@ -18,6 +18,7 @@ export default function MasterWorkplace() {
   const [toast, setToast] = useState(null)
   const [commentOn, setCommentOn] = useState(null) // id заказа с открытым полем
   const [text, setText] = useState('')
+  const [photosOn, setPhotosOn] = useState(null) // id заказа с открытой галереей
 
   const mine = orders.filter((o) => o.stage === MY_STAGE)
   const overdue = mine.filter((o) => o.overdue)
@@ -46,7 +47,8 @@ export default function MasterWorkplace() {
     setCommentOn(null); setText('')
     flash('Комментарий добавлен в историю заказа')
   }
-  const photo = (o) => { addPhoto(o.id, 'Готовность', 'Мастер'); flash('Фотография прикреплена к заказу') }
+  const togglePhotos = (o) => setPhotosOn((c) => (c === o.id ? null : o.id))
+  const attachPhoto = (o) => { addPhoto(o.id, 'Готовность', 'Мастер'); flash('Фотография прикреплена к заказу') }
 
   const Summary = ({ label, value, color, soft }) => (
     <div className="card card-pad">
@@ -105,14 +107,21 @@ export default function MasterWorkplace() {
                 </div>
               )}
 
-              {o.photos.length > 0 && (
-                <div className="row gap8 mt12" style={{ overflowX: 'auto' }}>
-                  {o.photos.map((p) => (
-                    <div key={p.id} style={{ width: 76, flexShrink: 0 }}>
-                      <ProductImage product={o.product} kind={p.kind} height={52} radius={8} />
-                      <div className="muted" style={{ fontSize: 10, marginTop: 2 }}>{p.kind}</div>
+              {photosOn === o.id && (
+                <div className="mt12" style={{ background: 'var(--bg-soft)', borderRadius: 10, padding: 10 }}>
+                  {o.photos.length > 0 ? (
+                    <div className="row gap8" style={{ overflowX: 'auto' }}>
+                      {o.photos.map((p) => (
+                        <div key={p.id} style={{ width: 76, flexShrink: 0 }}>
+                          <ProductImage product={o.product} kind={p.kind} height={52} radius={8} />
+                          <div className="muted" style={{ fontSize: 10, marginTop: 2 }}>{p.kind}</div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  ) : (
+                    <div className="muted f12">Фотографии пока не прикреплены</div>
+                  )}
+                  <button className="btn btn-sm mt8" onClick={() => attachPhoto(o)}><IconCamera size={14} /> Прикрепить фото</button>
                 </div>
               )}
 
@@ -131,7 +140,7 @@ export default function MasterWorkplace() {
               </div>
               <div className="row gap8 wrap mt8">
                 <button className={`btn btn-ghost btn-sm ${commentOn === o.id ? 'btn-primary' : ''}`} onClick={() => toggleComment(o)}><IconComment size={14} /> Комментарий</button>
-                <button className="btn btn-ghost btn-sm" onClick={() => photo(o)}><IconCamera size={14} /> Фото {o.photos.length > 0 ? `(${o.photos.length})` : ''}</button>
+                <button className={`btn btn-ghost btn-sm ${photosOn === o.id ? 'btn-primary' : ''}`} onClick={() => togglePhotos(o)}><IconCamera size={14} /> Фото {o.photos.length > 0 ? `(${o.photos.length})` : ''}</button>
                 <button className={`btn btn-ghost btn-sm ${o.problem ? 'btn-red' : ''}`} style={o.problem ? {} : { color: 'var(--red)' }} onClick={() => problem(o)}><IconAlert size={14} /> {o.problem ? 'Снять проблему' : 'Проблема'}</button>
               </div>
               {commentOn === o.id && (
