@@ -136,7 +136,7 @@ export default function OrderCard({ order: initial, onClose }) {
             <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(180px,1fr))' }}>
               {order.photos.map((p) => (
                 <button key={p.id} onClick={() => setLightbox(p)} style={{ padding: 0, border: 'none', background: 'none', cursor: 'zoom-in' }}>
-                  <ProductImage product={order.product} label={`Фото: ${p.kind}`} />
+                  <ProductImage product={order.product} kind={p.kind} label={`Фото: ${p.kind}`} />
                 </button>
               ))}
             </div>
@@ -264,7 +264,7 @@ function Lightbox({ photo, order, onClose }) {
           <button className="icon-btn" onClick={onClose}><IconClose /></button>
         </div>
         <div style={{ borderRadius: 16, overflow: 'hidden', boxShadow: 'var(--shadow-lg)' }}>
-          <ProductImage product={order.product} height={420} label={`Фото ${photo.kind} · ${order.object}`} />
+          <ProductImage product={order.product} kind={photo.kind} height={420} label={`Фото ${photo.kind} · ${order.object}`} />
         </div>
       </div>
     </div>

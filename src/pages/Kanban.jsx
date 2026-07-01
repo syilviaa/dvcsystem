@@ -3,7 +3,6 @@ import { useStore } from '../store/Store.jsx'
 import { useUI } from '../App.jsx'
 import { STAGES } from '../data/mockData.js'
 import { ProgressBar, PriorityBadge, readyColor } from '../components/shared.jsx'
-import ProductImage from '../components/ProductImage.jsx'
 import { IconClock, IconAlert, IconUsers } from '../components/Icons.jsx'
 
 function OrderMini({ order, onDragStart, onClick }) {
@@ -17,10 +16,9 @@ function OrderMini({ order, onDragStart, onClick }) {
       className="card"
       style={{
         padding: 0, marginBottom: 10, cursor: 'grab', boxShadow: 'var(--shadow-sm)',
-        borderLeft: `3px solid ${prioBar}`, userSelect: 'none', overflow: 'hidden',
+        borderLeft: `3px solid ${prioBar}`, userSelect: 'none',
       }}
     >
-      <ProductImage product={order.product} height={72} radius={0} label={order.product} />
       <div style={{ padding: '11px 13px' }}>
         <div className="row between">
           <span className="bold f13" style={{ color: 'var(--primary)' }}>{order.num}</span>

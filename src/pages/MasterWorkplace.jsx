@@ -109,7 +109,7 @@ export default function MasterWorkplace() {
                 <div className="row gap8 mt12" style={{ overflowX: 'auto' }}>
                   {o.photos.map((p) => (
                     <div key={p.id} style={{ width: 76, flexShrink: 0 }}>
-                      <ProductImage product={o.product} height={52} radius={8} />
+                      <ProductImage product={o.product} kind={p.kind} height={52} radius={8} />
                       <div className="muted" style={{ fontSize: 10, marginTop: 2 }}>{p.kind}</div>
                     </div>
                   ))}
