@@ -2,15 +2,17 @@ import { useState } from 'react'
 import { useStore } from '../store/Store.jsx'
 import { stageTitle, STAGES, stageIndex } from '../data/mockData.js'
 import {
-  ProgressBar, PriorityBadge, StageBadge, PhotoThumb, readyColor,
+  ProgressBar, PriorityBadge, StageBadge, readyColor,
 } from './shared.jsx'
+import ProductImage from './ProductImage.jsx'
+import { downloadDoc } from '../utils/files.js'
 import {
   IconClose, IconFile, IconCamera, IconClock, IconArrowR, IconCheck,
 } from './Icons.jsx'
 
 const TABS = ['Общее', 'Спецификация', 'Документы', 'Фотографии', 'История']
 
-const DOC_COLOR = { PDF: '#dc2626', DWG: '#2563eb', XLS: '#16a34a' }
+const DOC_COLOR = { PDF: '#dc2626', DWG: '#2563eb', DXF: '#2563eb', XLS: '#16a34a' }
 
 export default function OrderCard({ order: initial, onClose }) {
   const { orders, moveOrder, addComment } = useStore()
@@ -134,7 +136,7 @@ export default function OrderCard({ order: initial, onClose }) {
             <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(180px,1fr))' }}>
               {order.photos.map((p) => (
                 <button key={p.id} onClick={() => setLightbox(p)} style={{ padding: 0, border: 'none', background: 'none', cursor: 'zoom-in' }}>
-                  <PhotoThumb kind={p.kind} label={`Фото: ${p.kind}`} />
+                  <ProductImage product={order.product} label={`Фото: ${p.kind}`} />
                 </button>
               ))}
             </div>
@@ -191,18 +193,10 @@ export default function OrderCard({ order: initial, onClose }) {
 // --- Просмотрщик документов ---
 function DocViewer({ doc, order, onClose }) {
   const color = DOC_COLOR[doc.type] || '#475569'
-  const download = () => {
-    const content = `DVC Systems — ${doc.name}\nЗаказ: ${order.num}\nОбъект: ${order.object}\nКлиент: ${order.client}\n\nСпецификация:\n${order.spec.map((r) => ` • ${r.grade} ${r.profile} — ${r.qty} шт, ${r.weight} т, ${r.thickness} мм`).join('\n')}\n`
-    const url = URL.createObjectURL(new Blob([content], { type: 'text/plain;charset=utf-8' }))
-    const a = document.createElement('a')
-    a.href = url
-    a.download = doc.name.replace(/\.(pdf|dwg|xlsx)$/i, '') + '.txt'
-    a.click()
-    URL.revokeObjectURL(url)
-  }
+  const download = () => downloadDoc({ ...order, statusTitle: stageTitle(order.stage) }, doc)
   return (
-    <div className="modal-overlay" style={{ zIndex: 120 }} onClick={onClose}>
-      <div className="modal" style={{ maxWidth: 720 }} onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay" style={{ zIndex: 120, background: 'rgba(15,23,42,0.72)', alignItems: 'center' }} onClick={onClose}>
+      <div className="modal" style={{ maxWidth: 760 }} onClick={(e) => e.stopPropagation()}>
         <div className="row between" style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', background: 'var(--bg-panel)' }}>
           <div className="row gap12">
             <span style={{ width: 34, height: 42, borderRadius: 7, background: `${color}18`, color, display: 'grid', placeItems: 'center', fontWeight: 800, fontSize: 10 }}>{doc.type}</span>
@@ -227,7 +221,7 @@ function DocViewer({ doc, order, onClose }) {
                   ))}
                 </tbody>
               </table>
-            ) : doc.type === 'DWG' ? (
+            ) : doc.type === 'DWG' || doc.type === 'DXF' ? (
               <svg viewBox="0 0 600 380" style={{ width: '100%' }}>
                 <rect x="0.5" y="0.5" width="599" height="379" fill="none" stroke="#cbd5e1" />
                 <g stroke="#1e293b" strokeWidth="2" fill="none">
@@ -263,14 +257,14 @@ function DocViewer({ doc, order, onClose }) {
 // --- Лайтбокс фото ---
 function Lightbox({ photo, order, onClose }) {
   return (
-    <div className="modal-overlay" style={{ zIndex: 120, alignItems: 'center' }} onClick={onClose}>
+    <div className="modal-overlay" style={{ zIndex: 120, alignItems: 'center', background: 'rgba(15,23,42,0.82)' }} onClick={onClose}>
       <div style={{ width: 'min(720px, 92vw)' }} onClick={(e) => e.stopPropagation()}>
         <div className="row between" style={{ color: '#fff', marginBottom: 12 }}>
-          <div className="bold">{order.num} · {photo.kind}</div>
+          <div className="bold">{order.num} · {photo.kind} · {order.object}</div>
           <button className="icon-btn" onClick={onClose}><IconClose /></button>
         </div>
         <div style={{ borderRadius: 16, overflow: 'hidden', boxShadow: 'var(--shadow-lg)' }}>
-          <PhotoThumb kind={photo.kind} label={`Фото ${photo.kind} · ${order.object}`} />
+          <ProductImage product={order.product} height={420} label={`Фото ${photo.kind} · ${order.object}`} />
         </div>
       </div>
     </div>

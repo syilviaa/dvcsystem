@@ -3,6 +3,7 @@ import { useStore } from '../store/Store.jsx'
 import { useUI } from '../App.jsx'
 import { STAGES, stageIndex, stageTitle } from '../data/mockData.js'
 import { ProgressBar, PriorityBadge, readyColor } from '../components/shared.jsx'
+import ProductImage from '../components/ProductImage.jsx'
 import {
   IconPlay, IconPause, IconCheck, IconArrowR, IconComment,
   IconCamera, IconAlert, IconClock,
@@ -11,7 +12,7 @@ import {
 const MY_STAGE = 'painting' // мастер участка «Покраска»
 
 export default function MasterWorkplace() {
-  const { orders, moveOrder, pushEvent, pushNotification, addComment, addPhoto } = useStore()
+  const { orders, moveOrder, pushEvent, addComment, addPhoto, reportProblem, resolveProblem } = useStore()
   const { openOrder } = useUI()
   const [work, setWork] = useState({}) // id -> 'working' | 'paused'
   const [toast, setToast] = useState(null)
@@ -33,7 +34,11 @@ export default function MasterWorkplace() {
     if (next) { moveOrder(o.id, next.key, 'Мастер'); flash(`${o.num} передан на «${next.title}»`) }
     setWork((w) => { const c = { ...w }; delete c[o.id]; return c })
   }
-  const problem = (o) => { pushNotification('danger', 'Сообщение о проблеме', `Мастер: проблема по заказу ${o.num} на покраске`); pushEvent('danger', `Проблема по заказу ${o.num}`, 'Мастер'); flash('Проблема отправлена руководителю') }
+  const problem = (o) => {
+    if (o.problem) { resolveProblem(o.id); flash(`Проблема по ${o.num} снята`); return }
+    reportProblem(o.id, 'Недостаток краски на покраске', 'Мастер')
+    flash('Проблема отправлена руководителю')
+  }
   const toggleComment = (o) => { setCommentOn((c) => (c === o.id ? null : o.id)); setText('') }
   const submitComment = (o) => {
     if (!text.trim()) return
@@ -94,6 +99,23 @@ export default function MasterWorkplace() {
               <div className="bold mt8">{o.object}</div>
               <div className="muted f12 mt4">{o.product} · {o.weight} т</div>
 
+              {o.problem && (
+                <div className="row between mt8" style={{ background: 'var(--red-soft)', color: 'var(--red)', borderRadius: 10, padding: '8px 12px' }}>
+                  <span className="row gap8 f12 bold"><IconAlert size={14} /> Проблема: {o.problem}</span>
+                </div>
+              )}
+
+              {o.photos.length > 0 && (
+                <div className="row gap8 mt12" style={{ overflowX: 'auto' }}>
+                  {o.photos.map((p) => (
+                    <div key={p.id} style={{ width: 76, flexShrink: 0 }}>
+                      <ProductImage product={o.product} height={52} radius={8} />
+                      <div className="muted" style={{ fontSize: 10, marginTop: 2 }}>{p.kind}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <div className="row gap12 mt12" style={{ alignItems: 'center' }}>
                 <div style={{ flex: 1 }}><ProgressBar value={o.readiness} /></div>
                 <span className="bold f12" style={{ color: readyColor(o.readiness) }}>{o.readiness}%</span>
@@ -109,8 +131,8 @@ export default function MasterWorkplace() {
               </div>
               <div className="row gap8 wrap mt8">
                 <button className={`btn btn-ghost btn-sm ${commentOn === o.id ? 'btn-primary' : ''}`} onClick={() => toggleComment(o)}><IconComment size={14} /> Комментарий</button>
-                <button className="btn btn-ghost btn-sm" onClick={() => photo(o)}><IconCamera size={14} /> Фото</button>
-                <button className="btn btn-ghost btn-sm" style={{ color: 'var(--red)' }} onClick={() => problem(o)}><IconAlert size={14} /> Проблема</button>
+                <button className="btn btn-ghost btn-sm" onClick={() => photo(o)}><IconCamera size={14} /> Фото {o.photos.length > 0 ? `(${o.photos.length})` : ''}</button>
+                <button className={`btn btn-ghost btn-sm ${o.problem ? 'btn-red' : ''}`} style={o.problem ? {} : { color: 'var(--red)' }} onClick={() => problem(o)}><IconAlert size={14} /> {o.problem ? 'Снять проблему' : 'Проблема'}</button>
               </div>
               {commentOn === o.id && (
                 <div className="row gap8 mt8">

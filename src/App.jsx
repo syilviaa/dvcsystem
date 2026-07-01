@@ -57,7 +57,7 @@ export default function App() {
   const [site, setSite] = useState(null)
   const [notifOpen, setNotifOpen] = useState(false)
   const store = useStore()
-  const { unread, live, setLive, role, setRole } = store
+  const { unread, live, setLive, role, setRole, resetDemo } = store
 
   const ui = { page, setPage, openOrder: setOrder, openSite: setSite }
   const [title, sub] = TITLES[page] || ['', '']
@@ -137,6 +137,14 @@ export default function App() {
               <option value="master">Роль: Мастер</option>
               <option value="tech">Роль: Технолог</option>
             </select>
+
+            <button
+              className="btn btn-sm"
+              onClick={() => { if (confirm('Сбросить все демо-данные к исходному состоянию?')) resetDemo() }}
+              title="Сбросить демо-данные (очистить сохранённое состояние)"
+            >
+              Сброс
+            </button>
 
             <button className="icon-btn" onClick={() => setNotifOpen(true)}>
               <IconBell />

@@ -169,8 +169,8 @@ const STAGE_DISTR = {
 
 const DOC_TEMPLATES = [
   { name: 'Спецификация КМ.pdf', type: 'PDF' },
-  { name: 'Чертёж каркаса.dwg', type: 'DWG' },
-  { name: 'Ведомость металла.xlsx', type: 'XLS' },
+  { name: 'Чертёж каркаса.dxf', type: 'DXF' },
+  { name: 'Ведомость металла.xls', type: 'XLS' },
   { name: 'Схема сборки КМД.pdf', type: 'PDF' },
   { name: 'Акт ОТК.pdf', type: 'PDF' },
 ]

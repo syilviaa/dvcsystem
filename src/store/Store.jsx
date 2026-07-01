@@ -10,6 +10,7 @@ import {
   stageIndex,
   stageTitle,
 } from '../data/mockData'
+import { loadDb, saveDb, clearDb } from './db'
 
 const StoreContext = createContext(null)
 export const useStore = () => useContext(StoreContext)
@@ -21,15 +22,34 @@ const now = () =>
 
 const USERS = ['Иванов С.', 'Петров А.', 'Ахметов Е.', 'Смирнов Д.', 'Оспанов Н.']
 
+// Загружаем сохранённое состояние (демо-БД) один раз при старте
+const persisted = loadDb()
+// Возобновляем счётчики id, чтобы не было коллизий с восстановленными данными
+if (persisted) {
+  eventId = Math.max(eventId, ...(persisted.events || []).map((e) => e.id || 0))
+  notifId = Math.max(notifId, ...(persisted.notifications || []).map((n) => n.id || 0))
+}
+
 export function StoreProvider({ children }) {
-  const [orders, setOrders] = useState(seedOrders)
-  const [events, setEvents] = useState(initialEvents)
-  const [notifications, setNotifications] = useState(initialNotifications)
-  const [kpi, setKpi] = useState(seedKpi)
+  const [orders, setOrders] = useState(persisted?.orders ?? seedOrders)
+  const [events, setEvents] = useState(persisted?.events ?? initialEvents)
+  const [notifications, setNotifications] = useState(persisted?.notifications ?? initialNotifications)
+  const [kpi, setKpi] = useState(persisted?.kpi ?? seedKpi)
   const [role, setRole] = useState('director') // director | master | tech
   const [live, setLive] = useState(false)
   const [flashKey, setFlashKey] = useState(0) // триггер подсветки KPI
   const timer = useRef(null)
+
+  // Сохраняем состояние в демо-БД при любом изменении
+  useEffect(() => {
+    saveDb({ orders, events, notifications, kpi })
+  }, [orders, events, notifications, kpi])
+
+  // Полный сброс демо-данных
+  const resetDemo = useCallback(() => {
+    clearDb()
+    window.location.reload()
+  }, [])
 
   const pushEvent = useCallback((type, text, user = 'Система') => {
     setEvents((e) => [{ id: ++eventId, type, text, time: now(), user }, ...e].slice(0, 40))
@@ -111,6 +131,32 @@ export function StoreProvider({ children }) {
     [pushEvent],
   )
 
+  // Сообщить о проблеме по заказу (флаг + уведомление руководителю)
+  const reportProblem = useCallback(
+    (orderId, note = 'Требуется вмешательство', user = 'Мастер') => {
+      let label = `№${orderId}`
+      setOrders((prev) =>
+        prev.map((o) => {
+          if (o.id !== orderId) return o
+          label = o.object
+          return {
+            ...o,
+            problem: note,
+            history: [...o.history, { time: now(), action: 'Сообщение о проблеме', user, note }],
+          }
+        }),
+      )
+      pushEvent('danger', `Проблема по заказу №${orderId} «${label}»: ${note}`, user)
+      pushNotification('danger', 'Сообщение о проблеме', `Заказ №${orderId} «${label}»: ${note}`)
+    },
+    [pushEvent, pushNotification],
+  )
+
+  // Снять флаг проблемы
+  const resolveProblem = useCallback((orderId) => {
+    setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, problem: null } : o)))
+  }, [])
+
   const markAllRead = useCallback(() => {
     setNotifications((n) => n.map((x) => ({ ...x, read: true })))
   }, [])
@@ -173,7 +219,7 @@ export function StoreProvider({ children }) {
   }, [live, pushEvent, pushNotification])
 
   const value = {
-    orders, setOrders, moveOrder, addComment, addPhoto,
+    orders, setOrders, moveOrder, addComment, addPhoto, reportProblem, resolveProblem, resetDemo,
     events, pushEvent,
     notifications, pushNotification, markAllRead, unread,
     kpi, sites, employees,
