@@ -11,10 +11,12 @@ import {
 const MY_STAGE = 'painting' // мастер участка «Покраска»
 
 export default function MasterWorkplace() {
-  const { orders, moveOrder, pushEvent, pushNotification } = useStore()
+  const { orders, moveOrder, pushEvent, pushNotification, addComment, addPhoto } = useStore()
   const { openOrder } = useUI()
   const [work, setWork] = useState({}) // id -> 'working' | 'paused'
   const [toast, setToast] = useState(null)
+  const [commentOn, setCommentOn] = useState(null) // id заказа с открытым полем
+  const [text, setText] = useState('')
 
   const mine = orders.filter((o) => o.stage === MY_STAGE)
   const overdue = mine.filter((o) => o.overdue)
@@ -32,8 +34,14 @@ export default function MasterWorkplace() {
     setWork((w) => { const c = { ...w }; delete c[o.id]; return c })
   }
   const problem = (o) => { pushNotification('danger', 'Сообщение о проблеме', `Мастер: проблема по заказу ${o.num} на покраске`); pushEvent('danger', `Проблема по заказу ${o.num}`, 'Мастер'); flash('Проблема отправлена руководителю') }
-  const comment = (o) => { pushEvent('info', `Комментарий к заказу ${o.num} добавлен`, 'Мастер'); flash('Комментарий добавлен') }
-  const photo = (o) => { pushEvent('info', `Фото прикреплено к заказу ${o.num}`, 'Мастер'); flash('Фотография прикреплена') }
+  const toggleComment = (o) => { setCommentOn((c) => (c === o.id ? null : o.id)); setText('') }
+  const submitComment = (o) => {
+    if (!text.trim()) return
+    addComment(o.id, text, 'Мастер')
+    setCommentOn(null); setText('')
+    flash('Комментарий добавлен в историю заказа')
+  }
+  const photo = (o) => { addPhoto(o.id, 'Готовность', 'Мастер'); flash('Фотография прикреплена к заказу') }
 
   const Summary = ({ label, value, color, soft }) => (
     <div className="card card-pad">
@@ -100,10 +108,22 @@ export default function MasterWorkplace() {
                 <button className="btn btn-primary btn-sm" onClick={() => forward(o)}><IconArrowR size={14} /> Передать далее</button>
               </div>
               <div className="row gap8 wrap mt8">
-                <button className="btn btn-ghost btn-sm" onClick={() => comment(o)}><IconComment size={14} /> Комментарий</button>
+                <button className={`btn btn-ghost btn-sm ${commentOn === o.id ? 'btn-primary' : ''}`} onClick={() => toggleComment(o)}><IconComment size={14} /> Комментарий</button>
                 <button className="btn btn-ghost btn-sm" onClick={() => photo(o)}><IconCamera size={14} /> Фото</button>
                 <button className="btn btn-ghost btn-sm" style={{ color: 'var(--red)' }} onClick={() => problem(o)}><IconAlert size={14} /> Проблема</button>
               </div>
+              {commentOn === o.id && (
+                <div className="row gap8 mt8">
+                  <input
+                    className="search" style={{ flex: 1 }} autoFocus
+                    placeholder="Текст комментария…"
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && submitComment(o)}
+                  />
+                  <button className="btn btn-primary btn-sm" onClick={() => submitComment(o)}>Отправить</button>
+                </div>
+              )}
             </div>
           )
         })}

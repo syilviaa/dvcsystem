@@ -80,15 +80,51 @@ export function StoreProvider({ children }) {
     [pushEvent, pushNotification],
   )
 
+  // Добавить комментарий к заказу (попадает в историю)
+  const addComment = useCallback(
+    (orderId, text, user = 'Вы') => {
+      if (!text || !text.trim()) return
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.id === orderId
+            ? { ...o, history: [...o.history, { time: now(), action: 'Комментарий', user, note: text.trim() }] }
+            : o,
+        ),
+      )
+      pushEvent('info', `Комментарий к заказу №${orderId}: ${text.trim()}`, user)
+    },
+    [pushEvent],
+  )
+
+  // Прикрепить фотографию к заказу
+  const addPhoto = useCallback(
+    (orderId, kind = 'Изделие', user = 'Вы') => {
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.id === orderId
+            ? { ...o, photos: [...o.photos, { kind, id: `${orderId}-add-${o.photos.length}-${Date.now()}` }] }
+            : o,
+        ),
+      )
+      pushEvent('info', `Фотография прикреплена к заказу №${orderId}`, user)
+    },
+    [pushEvent],
+  )
+
   const markAllRead = useCallback(() => {
     setNotifications((n) => n.map((x) => ({ ...x, read: true })))
   }, [])
 
-  // Динамические счётчики очередей на участках (из заказов)
+  // Динамические счётчики очередей и АВТО-ЦВЕТ участков.
+  // Цвет пересчитывается из загрузки и длины очереди:
+  //   🟢 норма · 🟡 требует внимания · 🔴 критично
   const sites = useMemo(() => {
     return seedSites.map((s) => {
       const queue = orders.filter((o) => o.stage === s.key).length
-      return { ...s, queue }
+      let status = 'green'
+      if (s.load >= 90 || queue >= 12) status = 'red'
+      else if (s.load >= 85 || queue >= 8) status = 'amber'
+      return { ...s, queue, status }
     })
   }, [orders])
 
@@ -137,7 +173,7 @@ export function StoreProvider({ children }) {
   }, [live, pushEvent, pushNotification])
 
   const value = {
-    orders, setOrders, moveOrder,
+    orders, setOrders, moveOrder, addComment, addPhoto,
     events, pushEvent,
     notifications, pushNotification, markAllRead, unread,
     kpi, sites, employees,
