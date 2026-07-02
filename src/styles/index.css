@@ -302,12 +302,18 @@ button {
   border-radius: 30px;
   border: 1px solid var(--border);
   background: var(--bg-panel);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.user-chip:hover {
+  background: var(--bg-soft);
+  border-color: var(--border-strong);
 }
 .avatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: var(--primary);
   color: #fff;
   display: grid;
   place-items: center;

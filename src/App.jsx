@@ -2,7 +2,7 @@ import { useState, createContext, useContext } from 'react'
 import { useStore } from './store/Store.jsx'
 import {
   IconDashboard, IconMap, IconKanban, IconMetal, IconPart,
-  IconMaster, IconDirector, IconBell, IconPlay, IconStop,
+  IconMaster, IconDirector, IconBell, IconChevron,
 } from './components/Icons.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import ProductionMap from './pages/ProductionMap.jsx'
@@ -57,7 +57,16 @@ export default function App() {
   const [site, setSite] = useState(null)
   const [notifOpen, setNotifOpen] = useState(false)
   const store = useStore()
-  const { unread, live, setLive, role, setRole, resetDemo } = store
+  const { unread, role, setRole } = store
+
+  // Смена роли по клику на аккаунт: Директор → Мастер → Технолог → …
+  const ROLE_ORDER = ['director', 'master', 'tech']
+  const ROLE_PAGE = { director: 'director', master: 'master', tech: 'dashboard' }
+  const cycleRole = () => {
+    const next = ROLE_ORDER[(ROLE_ORDER.indexOf(role) + 1) % ROLE_ORDER.length]
+    setRole(next)
+    setPage(ROLE_PAGE[next])
+  }
 
   const ui = { page, setPage, openOrder: setOrder, openSite: setSite }
   const [title, sub] = TITLES[page] || ['', '']
@@ -109,55 +118,19 @@ export default function App() {
             </div>
             <div className="topbar-spacer" />
 
-            <button
-              className={`btn btn-sm ${live ? 'btn-red' : 'btn-primary'}`}
-              onClick={() => setLive((v) => !v)}
-              title="Имитация синхронной работы пользователей"
-            >
-              {live ? <IconStop size={15} /> : <IconPlay size={15} />}
-              {live ? 'Остановить симуляцию' : 'Живой режим'}
-            </button>
-
-            <div className="live-pill">
-              <span className="live-dot" /> Онлайн
-            </div>
-
-            {/* Переключатель роли */}
-            <select
-              className="btn btn-sm"
-              value={role}
-              onChange={(e) => {
-                setRole(e.target.value)
-                if (e.target.value === 'master') setPage('master')
-                if (e.target.value === 'director') setPage('director')
-              }}
-              style={{ paddingRight: 8 }}
-            >
-              <option value="director">Роль: Директор</option>
-              <option value="master">Роль: Мастер</option>
-              <option value="tech">Роль: Технолог</option>
-            </select>
-
-            <button
-              className="btn btn-sm"
-              onClick={() => { if (confirm('Сбросить все демо-данные к исходному состоянию?')) resetDemo() }}
-              title="Сбросить демо-данные (очистить сохранённое состояние)"
-            >
-              Сброс
-            </button>
-
             <button className="icon-btn" onClick={() => setNotifOpen(true)}>
               <IconBell />
               {unread > 0 && <span className="count-dot">{unread}</span>}
             </button>
 
-            <div className="user-chip">
+            <button className="user-chip" onClick={cycleRole} title="Нажмите, чтобы сменить роль">
               <div className="avatar">{me.short}</div>
-              <div>
+              <div style={{ textAlign: 'left' }}>
                 <div className="u-name">{me.name}</div>
                 <div className="u-role">{me.role}</div>
               </div>
-            </div>
+              <IconChevron size={15} style={{ color: 'var(--text-3)', marginLeft: 2 }} />
+            </button>
           </header>
 
           <main className="content" key={page}>
