@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useStore } from '../store/Store.jsx'
 import { stageTitle, STAGES, stageIndex } from '../data/mockData.js'
 import {
@@ -31,6 +31,18 @@ export default function OrderCard({ order: initial, onClose }) {
     addComment(order.id, comment, 'Вы')
     setComment('')
   }
+
+  // Закрытие по Esc: сначала вложенные окна, затем карточку
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return
+      if (lightbox) setLightbox(null)
+      else if (doc) setDoc(null)
+      else onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [lightbox, doc, onClose])
 
   const Field = ({ label, value }) => (
     <div>
@@ -234,17 +246,78 @@ function DocViewer({ doc, order, onClose }) {
                 <text x="300" y="360" textAnchor="middle" fontSize="13" fill="#64748b">Чертёж КМД · {order.object}</text>
               </svg>
             ) : (
-              <div>
-                <div className="bold" style={{ fontSize: 18 }}>{order.object}</div>
+              <div style={{ fontSize: 13.5, lineHeight: 1.6, color: '#1f2937' }}>
+                <div className="bold" style={{ fontSize: 19 }}>{order.object}</div>
                 <div className="muted mt4">{doc.name.replace('.pdf', '')} · {order.client}</div>
                 <div style={{ height: 1, background: 'var(--border)', margin: '16px 0' }} />
-                {['Общие данные', 'Спецификация металлопроката', 'Узлы соединений', 'Требования к сварке', 'Антикоррозийная защита'].map((s, i) => (
-                  <div key={i} style={{ marginBottom: 14 }}>
-                    <div className="bold f13">{i + 1}. {s}</div>
-                    <div style={{ height: 8, background: '#eef1f6', borderRadius: 4, marginTop: 6, width: '92%' }} />
-                    <div style={{ height: 8, background: '#eef1f6', borderRadius: 4, marginTop: 6, width: '78%' }} />
-                  </div>
-                ))}
+
+                <div className="bold" style={{ fontSize: 15, marginBottom: 8 }}>1. Общие данные</div>
+                <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 20 }}>
+                  <tbody>
+                    {[
+                      ['Номер заказа', order.num],
+                      ['Клиент', order.client],
+                      ['Объект', order.object],
+                      ['Изделие', order.product],
+                      ['Дата начала', order.startDate],
+                      ['Плановая дата', order.planDate],
+                      ['Ответственный', order.responsible],
+                      ['Приоритет', order.priority],
+                      ['Общий вес', `${order.weight} т`],
+                    ].map(([k, v]) => (
+                      <tr key={k}>
+                        <td style={{ padding: '5px 0', color: '#6b7280', width: 180, verticalAlign: 'top' }}>{k}</td>
+                        <td style={{ padding: '5px 0', fontWeight: 600 }}>{v}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                <div className="bold" style={{ fontSize: 15, marginBottom: 8 }}>2. Спецификация металлопроката</div>
+                <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 20, fontSize: 13 }}>
+                  <thead>
+                    <tr style={{ background: '#f3f4f6' }}>
+                      {['Марка', 'Профиль', 'Кол-во', 'Вес', 'Толщина'].map((h) => (
+                        <th key={h} style={{ textAlign: 'left', padding: '7px 10px', borderBottom: '1px solid #e5e7eb' }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {order.spec.map((r, i) => (
+                      <tr key={i}>
+                        <td style={{ padding: '7px 10px', borderBottom: '1px solid #f1f2f4', fontWeight: 600 }}>{r.grade}</td>
+                        <td style={{ padding: '7px 10px', borderBottom: '1px solid #f1f2f4' }}>{r.profile}</td>
+                        <td style={{ padding: '7px 10px', borderBottom: '1px solid #f1f2f4' }}>{r.qty} шт</td>
+                        <td style={{ padding: '7px 10px', borderBottom: '1px solid #f1f2f4' }}>{r.weight} т</td>
+                        <td style={{ padding: '7px 10px', borderBottom: '1px solid #f1f2f4' }}>{r.thickness} мм</td>
+                      </tr>
+                    ))}
+                    <tr>
+                      <td colSpan={2} style={{ padding: '7px 10px', fontWeight: 700 }}>Итого</td>
+                      <td style={{ padding: '7px 10px', fontWeight: 700 }}>{order.qty} шт</td>
+                      <td style={{ padding: '7px 10px', fontWeight: 700 }}>{order.weight} т</td>
+                      <td />
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div className="bold" style={{ fontSize: 15, marginBottom: 6 }}>3. Узлы соединений</div>
+                <p style={{ margin: '0 0 20px' }}>
+                  Монтажные и заводские соединения — сварные и на высокопрочных болтах М20–М24 класса прочности 10.9.
+                  Все стыки выполняются по чертежам КМД. Контроль затяжки болтов — динамометрическим ключом.
+                </p>
+
+                <div className="bold" style={{ fontSize: 15, marginBottom: 6 }}>4. Требования к сварке</div>
+                <p style={{ margin: '0 0 20px' }}>
+                  Сварка полуавтоматическая в среде CO₂, проволока Св-08Г2С Ø1.2 мм. Катеты швов — по чертежам.
+                  Контроль качества швов: визуально-измерительный (100%) и ультразвуковой (выборочно) по ГОСТ.
+                </p>
+
+                <div className="bold" style={{ fontSize: 15, marginBottom: 6 }}>5. Антикоррозийная защита</div>
+                <p style={{ margin: 0 }}>
+                  Подготовка поверхности — абразивная до степени Sa 2½. Грунт-эмаль по металлу, серый RAL 7040,
+                  общая толщина покрытия 120 мкм. Срок службы покрытия — не менее 15 лет.
+                </p>
               </div>
             )}
           </div>
